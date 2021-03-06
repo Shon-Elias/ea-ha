@@ -60,6 +60,9 @@ const Accounts = () => {
   const editingNameHandler = e => {
 
     const name = prompt("Update " + e.target.innerHTML+  " name:", e.target.innerHTML)
+    if(name === null){
+      return
+    }
     const editedAccounts = accounts.map(account => {
 
       if(account.name === e.target.innerHTML){
