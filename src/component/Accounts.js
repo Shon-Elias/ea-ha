@@ -22,7 +22,6 @@ const Accounts = () => {
     const accountList =  resetStyling(accountsData)
 
     setAccounts(accountList)
-    console.log('accounts', accounts)
 
 
   },[])
@@ -45,11 +44,13 @@ const Accounts = () => {
     highlightedAccounts[selectedManager].styling.selectedManager = true
 
     highlightedAccounts[selectedManager].employeesID.map(employee => {
-      console.log(employee)
+      // console.log(employee)
       const selectedEmployee = accounts.findIndex(u => {
         return u.id === employee
       })
       highlightedAccounts[selectedEmployee].styling.highlight = true
+
+      return highlightedAccounts;
     })
 
     setAccounts(highlightedAccounts)
