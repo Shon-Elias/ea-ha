@@ -1,0 +1,51 @@
+table{
+  table-layout: fixed;
+  width: 80%;
+  margin: auto;
+  padding-bottom: 60px;
+
+}
+
+
+
+thead tr{
+  font-weight: bold;
+  background-color: whitesmoke ;
+  border-bottom: 2px black solid;
+}
+
+thead td{
+  border-bottom: 5px black solid;
+
+}
+
+
+tr{
+  background-color: rgb(244, 244, 244);
+}
+
+
+td{
+
+  padding: 5px;
+}
+
+
+.highlight{
+
+  border: 2px solid lightskyblue;
+
+
+}
+
+.no-employees{
+  background-color: red;
+}
+
+input{
+  margin: auto;
+  width: 290px;
+  border-width: 0px;
+  outline: none;
+  height: 21px;
+}
