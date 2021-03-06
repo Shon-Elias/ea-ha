@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 
 const Accounts = () => {
 
+  let accountsList;
   const [accounts, setAccounts] = useState([])
   const [add, setAdd] = useState(false)
   const [name, setName] = useState("")
@@ -202,10 +203,8 @@ const Accounts = () => {
   }
 
 
-  // Comparing leangth of state with the stored state
-  if(storedAccounts.length > accounts.length){
-    setAccounts(storedAccounts)
-  }
+
+  accountsList = storedAccounts.length > accounts.length ? storedAccounts: accounts
 
   return (
     <div>
@@ -214,10 +213,10 @@ const Accounts = () => {
           add ? <button onClick={addAccountManager}>Save</button> : null
         }
         {
-          accounts ?  accountManagerTable(accounts) : null
+          accountsList ?  accountManagerTable(accountsList) : null
         }
         {
-          accounts ? accountsTable(accounts) :null
+          accountsList ? accountsTable(accountsList) :null
         }
     </div>
   )
