@@ -1,26 +1,34 @@
-import { useEffect, useState, useReducer } from 'react';
+import { useEffect, useState } from 'react';
 import { accountsData } from "../data";
 import './style.css'
-import { reducer, initialState } from './useReducer/reducer'
+import { addManager, setManagerData } from '../redux/actions';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+
 
 const Accounts = () => {
 
+  let accountsList;
+  const [accounts, setAccounts] = useState([])
   const [add, setAdd] = useState(false)
   const [name, setName] = useState("")
   const [manager, setManager] = useState("")
+  const dispatch = useDispatch();
+  const storedAccounts = useSelector(state => state.accounts)
 
-  const [storedAccounts, dispatch] = useReducer(reducer, initialState)
 
 
-  // works with useReducer
   useEffect(() => {
 
     const accountList =  resetStyling(accountsData)
-    dispatch({type: 'FETCH_DATA_SUCCESS', payload: accountList})
+    // dispatch(setManagerData(accountList));
+
+    setAccounts(accountList)
+
 
   },[])
 
-  // helper method
+
   const resetStyling = allAccounts => {
      return allAccounts.map(a => {
       return {...a, styling: {selectedManager: false, highlight:false}  }
@@ -28,11 +36,10 @@ const Accounts = () => {
 
   }
 
-  // works with useReducer
   const highlightEmployeeHandler = (id) => {
-    let highlightedAccounts = resetStyling(storedAccounts.accounts)
+    let highlightedAccounts = resetStyling(accounts)
 
-    const selectedManager = storedAccounts.accounts.findIndex(u => {
+    const selectedManager = accounts.findIndex(u => {
       return u.id === id
     })
     highlightedAccounts[selectedManager].styling.highlight = true
@@ -40,27 +47,25 @@ const Accounts = () => {
 
     highlightedAccounts[selectedManager].employeesID.map(employee => {
       // console.log(employee)
-      const selectedEmployee = storedAccounts.accounts.findIndex(u => {
+      const selectedEmployee = accounts.findIndex(u => {
         return u.id === employee
       })
       highlightedAccounts[selectedEmployee].styling.highlight = true
 
-      // return highlightedAccounts;
+      return highlightedAccounts;
     })
 
-    dispatch({type: 'HIGHLIGHTED_ACCOUNTS', payload: highlightedAccounts})
+    setAccounts(highlightedAccounts)
 
   }
 
-  // works with useReducer
   const editingNameHandler = e => {
 
     const name = prompt("Update " + e.target.innerHTML+  " name:", e.target.innerHTML)
     if(name === null){
       return
     }
-    // const editedAccounts = storedAccounts.map(account => {
-      storedAccounts.accounts.map(account => {
+    const editedAccounts = accounts.map(account => {
 
       if(account.name === e.target.innerHTML){
         account.name = name;
@@ -70,44 +75,34 @@ const Accounts = () => {
         return account;
     })
 
-    dispatch({type: 'CHANGE_MANAGER_NAME', payload: storedAccounts.accounts})
+    setAccounts(editedAccounts)
 
   }
 
-  // works with useReducer
+  // works!!
   const inactiveHandler = id => {
-    let editedAccounts = [...storedAccounts.accounts]
-    storedAccounts.accounts.map(account => {
+    let editedAccounts = [...accounts]
+    editedAccounts.map(account => {
       if(account.id === id){
         account.status = 'inactive';
       }
         return account;
     })
 
-    console.log("accuonts", storedAccounts.accounts)
-    console.log("inactive", editedAccounts)
-    // dispatch(setManagerData(editedAccounts));
-    dispatch({type: 'INACTIVE_ACCOUNTS', payload: storedAccounts.accounts})
-    // setAccounts(editedAccounts)
+    // console.log("accuonts", accounts)
+    // console.log("inactive", editedAccounts)
+
+    setAccounts(editedAccounts)
   }
 
-  // works with useReducer
+  // works!!
   const addAccountManager = () => {
 
-    dispatch({type: 'ADD_MANAGER', payload:
-     {
-       id: storedAccounts.accounts.length+1,
-       name,
-       company: '',
-       status: 'active',
-       manager: {
-         id: '',
-         name: manager
-        },
-       styling: {
-          highlight: false,
-          selectedManager: false
-        },employeesID: []}} )
+    dispatch(setManagerData(accounts));
+
+    dispatch(addManager(accounts.length+1, name, '', 'active', '',manager, false, false,[]));
+
+    // dispatch(addManager(storedAccounts.length+1, name, '', 'active', '',manager, false, false,[]));
 
     setAdd(!add)
     setName("")
@@ -167,7 +162,6 @@ const Accounts = () => {
   }
 
   const accountsTable = (accounts) => {
-    console.log('before rend accountsTable', accounts)
     const accountList = accounts.map((account, i) => {
 
       return (
@@ -217,7 +211,8 @@ const Accounts = () => {
 
 
 
-console.log('before rend', storedAccounts)
+  accountsList = storedAccounts.length > accounts.length ? storedAccounts: accounts
+
   return (
     <div>
         <button onClick={()=> setAdd(!add)}>{add ? 'cancel' : 'add'}</button>
@@ -225,10 +220,10 @@ console.log('before rend', storedAccounts)
           add ? <button onClick={addAccountManager}>Save</button> : null
         }
         {
-          storedAccounts.loading ?  '   Loading...' : storedAccounts.error !== '' ? storedAccounts.error : accountManagerTable(storedAccounts.accounts)
+          accountsList ?  accountManagerTable(accountsList) : null
         }
         {
-          storedAccounts.loading ? null : storedAccounts.error !== '' ? null :  accountsTable(storedAccounts.accounts)
+          accountsList ? accountsTable(accountsList) :null
         }
     </div>
   )
